@@ -57,7 +57,7 @@ gen country = regexs(1) if regexm(country_year, "([a-zA-Z]+)")
 		egen sba_skill = rowtotal(m3a-m3n),mi
 
 	*c_sba: Skilled birth attendance of births in last 2 years: go to report to verify how "skilled is defined"
-	gen c_sba = 1 if sba_skill>=1 & sba_skill<=26
+	gen c_sba = 1 if sba_skill>=1 & sba_skill!=.
 	replace c_sba = 0 if sba_skill==0 
 	foreach var of varlist *gskill{
 		replace c_sba = . if sba_skill==0  & `var'==.
