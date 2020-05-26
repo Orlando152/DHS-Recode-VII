@@ -38,30 +38,7 @@
 			replace c_pnc_any = 1 if (m63 <= 306 & inlist(m64,11,12,13)) | (m67 <= 306 & inlist(m68,11,12,13) & m67>=m63 ) | (m71 <= 306 & inlist(m72,11,12,13) & m71 >= m75) | (m75 <= 306 & inlist(m76,11,12,13))
 			replace c_pnc_any = . if inlist(m63,199,299,399,998) | inlist(m67,199,299,399,998) | inlist(m71,199,299,399,998) | inlist(m75,199,299,399,998) | m62 == 8 | m66 == 8 | m70 == 8 | m74 == 8
 	}
-
-/*
-recode m62 m66 m70 m74 (8=.)
-recode m63 m67 m71 m75 (199 299 399 998 = .)
-g mom_pnc =  (m63 <= 306 & inlist(m64,11,12,13)) | (m67 <= 306 & inlist(m68,11,12,13) & m67 > m63)  if !mi(m62, m63, m64) | !mi(m66, m67, m68)  // to exlcude if m63<m67 for delivery at facility
-replace mom_pnc = 0 if inlist(m62,0,.) & m66 == 0
-g child_pnc = (m71 <= 306 & inlist(m72,11,12,13)) & m71 > m75 | (m75 <= 306 & inlist(m76,11,12,13) ) if !mi(m70, m71, m72) | !mi(m74, m75, m76)
-replace child_pnc = 0 if inlist(m74,0,.) & m71 == 0
-gen c_pnc_any = mom_pnc ==1 | child_pnc ==1 if !mi(mom_pnc,child_pnc)
-*/
-
-	/* Recode VI
-		gen c_pnc_any = .
-		replace c_pnc_any = 0 if m50 != . | m70 != .
-		replace c_pnc_any = 1 if ((m71 <= 306 | m51 <= 306) & inrange(m72,11,13) & inrange(m52,11,13))
-		replace c_pnc_any = . if inlist(m71,199,299,399,998) | inlist(m51,199,299,399,998)  | m50 == 8 | m70 == 8
-
-	  gen c_pnc_any = ((m71 <= 306 | m51 <= 306) & inrange(m72,11,13) & inrange(m52,11,13) )
-    replace c_pnc_any = . if inlist(m71,199,299,399,998)&!m70 | inlist(m51,998)&!m50 | mi(m72)|mi(m52)
-
-		gen c_pnc_any = ((m63 <= 306 & inrange(m64,11,15)) | (m67 <= 306 & inrange(m68,11,15)) | (m71 <= 306 & inrange(m72,11,15)) | (m75 <= 306 & inrange(m76,11,15)))
-		replace c_pnc_any = . if inlist(m63,998) | inlist(m67,998) | inlist(m71,998) | inlist(m75,998) | !mi(m62) & mi(m64)
-
-*/
+	
 	*c_pnc_eff: mother AND child in first 24h by skilled health worker
 	if inlist(name,"Afghanistan2015") {
 		gen c_pnc_eff = (inrange(m72,11,13) & inrange(m51,100,124) & inrange(m71,100,124) )
@@ -97,27 +74,10 @@ gen c_pnc_any = mom_pnc ==1 | child_pnc ==1 if !mi(mom_pnc,child_pnc)
 
 	//replace c_pnc_eff = . if !(inrange(hm_age_mom,0,23)& bidx ==1)
 
-	/* Recode VI
-	gen c_pnc_eff_q = (inrange(m72,11,13) & inrange(m51,100,124) & inrange(m71,100,124)) if c_pnc_any == 1
-	replace c_pnc_eff_q = . if inlist(m71,199,299,399,998,.) | inlist(m51,998,.) | !mi(m72)
-
-		gen c_pnc_eff = .
-
-		replace c_pnc_eff = 0 if m62 != . | m66 != . & (m70 != . | m74 != .)
-		replace c_pnc_any = 1 if ((inrange(m63,100,124) & inrange(m64,11,15)) | (inrange(m67,100,124) & inrange(m68,11,15))) & ((inrange(m71,100,124) & inrange(m72,11,15)) | (inrange(m75,100,124) & inrange(m76,11,15)))
-		replace c_pnc_any = . if inlist(m63,199,299,399,998) | inlist(m67,199,299,399,998) | inlist(m71,199,299,399,998) | inlist(m75,199,299,399,998) | m62 == 8 | m66 == 8 | m70 == 8 | m74 == 8
-	*/
-
-
 	*c_pnc_eff_q: mother AND child in first 24h by skilled health worker among those with any PNC
 	gen c_pnc_eff_q = c_pnc_eff if c_pnc_any == 1
 
 	*c_pnc_eff2: mother AND child in first 24h by skilled health worker and cord check, temperature check and breastfeeding counselling within first two days
-	/*
-	egen check = rowtotal(m78a m78b m78e),mi
-    gen c_pnc_eff2 = (inrange(m72,11,13) & inrange(m51,100,124) & inrange(m71,100,124) & check == 1)
-    replace c_pnc_eff2 = . if inlist(m71,199,299,399,998,.) | inlist(m51,998,.) | !mi(m72)
-	*/
 	capture confirm variable m78a m78b m78d                            //m78* only available for Recode VII, cited from Aline
 	if _rc == 0 {
 	recode m78a m78b m78d (8=.)
@@ -127,10 +87,6 @@ gen c_pnc_any = mom_pnc ==1 | child_pnc ==1 if !mi(mom_pnc,child_pnc)
 	replace c_pnc_eff2 = 0 if c_pnc_eff == 0 | m78a == 0 | m78b == 0 | m78d == 0
 }
     *c_pnc_eff2_q: mother AND child in first 24h weeks by skilled health worker and cord check, temperature check and breastfeeding counselling within first two days among those with any PNC
-    /*
-	gen c_pnc_eff2_q = (inrange(m72,11,13) & inrange(m51,100,124) & inrange(m71,100,124) & check == 1) if c_pnc_any == 1
-    replace c_pnc_eff2_q = . if inlist(m71,199,299,399,998,.) | inlist(m51,998,.) | !mi(m72)
-	*/
 	gen c_pnc_eff2_q = c_pnc_eff2 if c_pnc_any ==1
 
 
