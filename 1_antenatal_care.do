@@ -17,21 +17,21 @@
 	g c_anc_bp_q = (m42c==1) if c_anc_any==1 & m42c!=.
 
 	*c_anc_bs: Blood sample taken during pregnancy of births in last 2 years
-	g c_anc_bs = 0 if m2n !=.  //  m2n covered more
+	g c_anc_bs = 0 if m2n !=.  
 	replace c_anc_bs = 1 if m42e == 1
 
 	*c_anc_bs_q: Blood sample taken during pregnancy among ANC users of births in last 2 years
 	g c_anc_bs_q = (m42e==1) if c_anc_any==1 & m42e!=.
 
 	*c_anc_ur: Urine sample taken during pregnancy of births in last 2 years
-	g c_anc_ur = 0 if m2n !=.  //  m2n covered more
+	g c_anc_ur = 0 if m2n !=.  
 	replace c_anc_ur = 1 if m42d == 1
 
 	*c_anc_ur_q: Urine sample taken during pregnancy among ANC users of births in last 2 years
 	g c_anc_ur_q = (m42d==1) if c_anc_any==1 & m42d!=.
 
 	*c_anc_ir: iron supplements taken during pregnancy of births in last 2 years
-	g c_anc_ir =m45==1 if m45<8
+	g c_anc_ir =m45==1 if m45<8  // not a subquestion for anc visit
 
 	*c_anc_ir_q: iron supplements taken during pregnancy among ANC users of births in last 2 years
 	gen c_anc_ir_q = c_anc_ir if c_anc_any==1
@@ -74,7 +74,7 @@
 	*c_anc_tet_q: pregnant women vaccinated against tetanus among ANC users for last birth in last 2 years
 	gen c_anc_tet_q = (rh_anc_neotet == 1) if c_anc_any == 1 & !mi(rh_anc_neotet)
 
-* cited from Aline Wang
+* cited from Aline: https://github.com/wengxyu1030/DHS-Recode-VII/blob/master/1_antenatal_care.do
 	*anc_skill: Categories as skilled: doctor, nurse, midwife, auxiliary nurse/midwife...
 	foreach var of varlist m2a-m2m {
 	local lab: variable label `var'
@@ -84,9 +84,9 @@
 	 }
 	/* do consider as skilled if contain words in
 		 the first group but don't contain any words in the second group */
-		egen anc_skill = rowtotal(m2a-m2m),mi
-		egen anc_skillmissing = group(m2a-m2m)
-		count if anc_skill ==0 & anc_skillmissing==. // 0 : number of case where "All non-missing skilled provider variables “No” and 1 or more of the skilled provider type missing"
+	egen anc_skill = rowtotal(m2a-m2m),mi
+	egen anc_skillmissing = group(m2a-m2m)
+	count if anc_skill ==0 & anc_skillmissing==. // 0 : number of case where "All non-missing skilled provider variables “No” and 1 or more of the skilled provider type missing"
 
 	*c_anc_ski: antenatal care visit with skilled provider for pregnancy of births in last 2 years
 	gen c_anc_ski = (anc_skill >= 1) if anc_skill !=.
