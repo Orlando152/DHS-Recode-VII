@@ -14,21 +14,21 @@
 	replace c_anc_bp = 1 if m42c == 1
 
 	*c_anc_bp_q: Blood pressure measured during pregnancy among ANC users of births in last 2 years
-	g c_anc_bp_q = (m42c==1) if c_anc_any==1 & m42c!=.
+	g c_anc_bp_q = c_anc_bp if c_anc_any==1 
 
 	*c_anc_bs: Blood sample taken during pregnancy of births in last 2 years
 	g c_anc_bs = 0 if m2n !=.  
 	replace c_anc_bs = 1 if m42e == 1
 
 	*c_anc_bs_q: Blood sample taken during pregnancy among ANC users of births in last 2 years
-	g c_anc_bs_q = (m42e==1) if c_anc_any==1 & m42e!=.
+	g c_anc_bs_q = c_anc_bs if c_anc_any==1 
 
 	*c_anc_ur: Urine sample taken during pregnancy of births in last 2 years
 	g c_anc_ur = 0 if m2n !=.  
 	replace c_anc_ur = 1 if m42d == 1
 
 	*c_anc_ur_q: Urine sample taken during pregnancy among ANC users of births in last 2 years
-	g c_anc_ur_q = (m42d==1) if c_anc_any==1 & m42d!=.
+	g c_anc_ur_q = c_anc_ur if c_anc_any==1
 
 	*c_anc_ir: iron supplements taken during pregnancy of births in last 2 years
 	g c_anc_ir =m45==1 if m45<8  // not a subquestion for anc visit
@@ -98,7 +98,7 @@
 	}
 	
 	*c_anc_ski_q: antenatal care visit with skilled provider among ANC users for pregnancy of births in last 2 years
-	gen c_anc_ski_q = (c_anc_ski == 1) if c_anc_any == 1 & !mi(c_anc_ski)
+	gen c_anc_ski_q = c_anc_ski if c_anc_any == 1 
 
 	*c_anc_eff: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples) of births in last 2 years
 	egen anc_blood = rowtotal(m42c m42d m42e),mi
