@@ -74,7 +74,7 @@
 	*c_anc_tet_q: pregnant women vaccinated against tetanus among ANC users for last birth in last 2 years
 	gen c_anc_tet_q = (rh_anc_neotet == 1) if c_anc_any == 1 & !mi(rh_anc_neotet)
 
-* cited from Aline: https://github.com/wengxyu1030/DHS-Recode-VII/blob/master/1_antenatal_care.do
+* c_anc_ski, c_anc_ski_q: cited from Aline: https://github.com/wengxyu1030/DHS-Recode-VII/blob/master/1_antenatal_care.do
 	*anc_skill: Categories as skilled: doctor, nurse, midwife, auxiliary nurse/midwife...
 	foreach var of varlist m2a-m2m {
 	local lab: variable label `var'
