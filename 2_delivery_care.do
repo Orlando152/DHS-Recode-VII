@@ -75,16 +75,14 @@ gen country = regexs(1) if regexm(country_year, "([a-zA-Z]+)")
 *c_sba_eff1: Effective delivery care (baby delivered in facility, by skilled provider, mother and child stay in facility for min. 24h, breastfeeding initiated in first 1h after birth)
     //gen stay = (inrange(m61,124,161)|inrange(m61,201,240)|inrange(m61,301,308))
 	gen stay = (inrange(m61,124,198)|inrange(m61,201,298)|inrange(m61,301,398)) if !inlist(m61,199,299,998,.)
-	gen c_sba_eff1 = .
-	replace c_sba_eff1 = 1 if c_facdel == 1 & c_sba == 1 & stay == 1 & c_earlybreast == 1
+	gen c_sba_eff1 = 1 if c_facdel == 1 & c_sba == 1 & stay == 1 & c_earlybreast == 1
 	replace c_sba_eff1 = 0 if c_facdel == 0 | c_sba == 0 | stay == 0 | c_earlybreast == 0
 
 *c_sba_eff1_q: Effective delivery care (baby delivered in facility, by skilled provider, mother and child stay in facility for min. 24h, breastfeeding initiated in first 1h after birth) among those with any SBA
 	gen c_sba_eff1_q = c_sba_eff1 if c_sba == 1
 
 *c_sba_eff2: Effective delivery care (baby delivered in facility, by skilled provider, mother and child stay in facility for min. 24h, breastfeeding initiated in first 1h after birth, skin2skin contact)
-	gen c_sba_eff2 = .
-	replace c_sba_eff2 = 1 if c_sba_eff1 == 1 & c_skin2skin ==1
+	gen c_sba_eff2 = 1 if c_sba_eff1 == 1 & c_skin2skin ==1
 	replace c_sba_eff2 = 0 if c_sba_eff1 == 0 | c_skin2skin ==0
 
 *c_sba_eff2_q: Effective delivery care (baby delivered in facility, by skilled provider, mother and child stay in facility for min. 24h, breastfeeding initiated in first 1h after birth, skin2skin contact) among those with any SBA
