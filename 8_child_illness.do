@@ -2,7 +2,7 @@
 *** Child illness ********
 **************************
 /*Note:
-The code regarding disease-treatment variables (c_treatARI, c_treatARI2, c_diarrhea_pro, c_fevertreat,  )
+The structure of generatin disease-treatment variables (c_treatARI, c_treatARI2, c_diarrhea_pro, c_fevertreat,  )
 is cited from Aline's Github: https://github.com/wengxyu1030/DHS-Recode-VI/blob/master/8_child_illness.do
 */
 * ARI
@@ -15,7 +15,7 @@ is cited from Aline's Github: https://github.com/wengxyu1030/DHS-Recode-VI/blob/
   gen c_ari2=(h31b == 1 & ccough == 1) if  h31b<8 & ccough <2
 
 * c_treatARI/c_treatARI2	   Child with acute respiratory infection (ARI) /ARI2 symptoms seen by formal provider
-* Cited from Alines' code
+* Cited from Aline's code
 gen c_treatARI= 0 if c_ari == 1
 gen c_treatARI2= 0 if c_ari2 == 1
 
