@@ -91,7 +91,7 @@
 	egen anc_skill = rowtotal(m2a-m2m),mi
 	
 	*c_anc_ski: antenatal care visit with skilled provider for pregnancy of births in last 2 years
-	gen c_anc_ski = c_anc_ski = 1 if anc_skill >= 1 & anc_skill<=26
+	gen c_anc_ski = c_anc_ski = 1 if anc_skill >= 1 & anc_skill!=.
 	replace c_anc_ski = 0 if anc_skill == 0
 	foreach var of varlist *gskill{
 	replace c_anc_ski = . if anc_skill == 0 & mi(`var')
