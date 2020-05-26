@@ -25,17 +25,6 @@ gen country = regexs(1) if regexm(country_year, "([a-zA-Z]+)")
 	replace c_earlybreast = . if inlist(m34,199,299,.)
 
 * Generation of c_facdel, c_hospdel & c_sba is cited from Aline: https://github.com/wengxyu1030/DHS-Recode-VI/blob/master/2_delivery_care.do
-	*sba_skill (not nailed down yet, need check the result)
-		foreach var of varlist m3a-m3n {
-		local lab: variable label `var'
-		replace `var' = . if !regexm("`lab'","trained") & (!regexm("`lab'","doctor|nurse|midwife|mifwife|aide soignante|assistante accoucheuse|clinical officer|mch aide|auxiliary birth attendant|physician assistant|professional|ferdsher|feldshare|skilled|community health care provider|birth attendant|hospital/health center worker|hew|auxiliary|icds|feldsher|mch|vhw|village health team|health personnel|gynecolog(ist|y)|obstetrician|internist|pediatrician|family welfare visitor|medical assistant|health assistant|general practitioner|matron") ///
-		|regexm("`lab'","na^|-na|traditional birth attendant|untrained|unquallified|empirical midwife|box"))
-		replace `var' = . if !inlist(`var',0,1)
-		}
-	/* do consider as skilled if contain words in
-	 the first group but don't contain any words in the second group */
-		egen sba_skill = rowtotal(m3a-m3n),mi
-
 	*c_hospdel: child born in hospital of births in last 2 years
 		decode m15, gen(m15_lab)
 		replace m15_lab = lower(m15_lab)
@@ -52,16 +41,31 @@ gen country = regexs(1) if regexm(country_year, "([a-zA-Z]+)")
 		replace c_facdel = 1 if regexm(m15_lab,"hospital|maternity|health center|dispensary") | ///
 		!regexm(m15_lab,"home|other private|other$|pharmacy|non medical|private nurse|religious|abroad|india|other public|tba")
 		replace c_facdel = . if mi(m15) | m15 == 99 | mi(m15_lab)
+	*sba_skill
+		foreach var of varlist m3a-m3n {
+		local lab: variable label `var'
+		replace `var' = . if !regexm("`lab'","trained") & (!regexm("`lab'","doctor|nurse|midwife|mifwife|aide soignante|assistante accoucheuse|clinical officer|mch aide|auxiliary birth attendant|physician assistant|professional|ferdsher|feldshare|skilled|community health care provider|birth attendant|hospital/health center worker|hew|auxiliary|icds|feldsher|mch|vhw|village health team|health personnel|gynecolog(ist|y)|obstetrician|internist|pediatrician|family welfare visitor|medical assistant|health assistant|general practitioner|matron") ///
+		|regexm("`lab'","na -|na^|-na|traditional birth attendant|untrained|unquallified|empirical midwife|box"))
+		replace `var' = . if !inlist(`var',0,1)
+			if regexm("`lab'","trained") | !(!regexm("`lab'","doctor|nurse|midwife|mifwife|aide soignante|assistante accoucheuse|clinical officer|mch aide|auxiliary birth attendant|physician assistant|professional|ferdsher|feldshare|skilled|community health care provider|birth attendant|hospital/health center worker|hew|auxiliary|icds|feldsher|mch|vhw|village health team|health personnel|gynecolog(ist|y)|obstetrician|internist|pediatrician|family welfare visitor|medical assistant|health assistant|general practitioner|matron") ///
+				|regexm("`lab'","na -|na^|-na|traditional birth attendant|untrained|unquallified|empirical midwife|box")) {
+			ren `var' `var'skill
+			}
+		}
+	/* do consider as skilled if contain words in
+	 the first group but don't contain any words in the second group */
+		egen sba_skill = rowtotal(m3a-m3n),mi
 
 	*c_sba: Skilled birth attendance of births in last 2 years: go to report to verify how "skilled is defined"
+	gen c_sba = 1 if sba_skill>=1
+		replace c_sba = 0 if sba_skill==0 
+		replace c_sba = . if sba_skill==0  & mi(*skill)
+	/*
 	gen c_sba = 0
 	replace c_sba = 1 if (m3a==1 | m3b==1 | m3c==1)
 	replace c_sba = . if m3a==. | m3b==. | m3c==.
-/*
-		gen c_sba = .
-		replace c_sba = 1 if sba_skill>=1
-		replace c_sba = 0 if sba_skill==0
-*/
+	*/
+
 *c_sba_q: child placed on mother's bare skin and breastfeeding initiated immediately after birth among children with sba of births in last 2 years
 		gen c_sba_q = (c_skin2skin == 1 & c_earlybreast == 1) if c_sba == 1
 		replace c_sba_q = . if c_skin2skin == . | c_earlybreast == .
