@@ -49,7 +49,7 @@ gen country = regexs(1) if regexm(country_year, "([a-zA-Z]+)")
 		replace `var' = . if !inlist(`var',0,1)
 			if regexm("`lab'","trained") | !(!regexm("`lab'","doctor|nurse|midwife|mifwife|aide soignante|assistante accoucheuse|clinical officer|mch aide|auxiliary birth attendant|physician assistant|professional|ferdsher|feldshare|skilled|community health care provider|birth attendant|hospital/health center worker|hew|auxiliary|icds|feldsher|mch|vhw|village health team|health personnel|gynecolog(ist|y)|obstetrician|internist|pediatrician|family welfare visitor|medical assistant|health assistant|general practitioner|matron") ///
 				|regexm("`lab'","na -|na^|-na|traditional birth attendant|untrained|unquallified|empirical midwife|box")) {
-			ren `var' `var'skill
+			ren `var' `var'gskill
 			}
 		}
 	/* do consider as skilled if contain words in
@@ -57,9 +57,11 @@ gen country = regexs(1) if regexm(country_year, "([a-zA-Z]+)")
 		egen sba_skill = rowtotal(m3a-m3n),mi
 
 	*c_sba: Skilled birth attendance of births in last 2 years: go to report to verify how "skilled is defined"
-	gen c_sba = 1 if sba_skill>=1
-		replace c_sba = 0 if sba_skill==0 
-		replace c_sba = . if sba_skill==0  & mi(*skill)
+	gen c_sba = 1 if sba_skill>=1 & sba_skill<=26
+	replace c_sba = 0 if sba_skill==0 
+	foreach var of varlist *gskill{
+		replace c_sba = . if sba_skill==0  & `var'==.
+	}
 	/*
 	gen c_sba = 0
 	replace c_sba = 1 if (m3a==1 | m3b==1 | m3c==1)
