@@ -142,13 +142,13 @@ foreach var in $h32 {
 
 *c_diarrhea_med	Child with diarrhea received any medicine other than ORS or hmf
   recode h12z h15 h15a h15b h15c h15d h15e h15f h15g h15h h15i (8=.)
-  egen med =rowtotal(h12z h15 h15a h15b h15c h15d h15e h15f h15g h15h h15i)
+  egen med =rowtotal(h12z h15 h15a h15b h15c h15d h15e h15f h15g h15h h15i),mi
   gen c_diarrhea_med = ( med !=0) if c_diarrhea == 1   // formal medicine don't include "home remedy, herbal medicine and other"
   replace c_diarrhea_med = . if h12z+h15+h15a+h15b+h15c+h15d+h15e+h15f+h15g+h15h+h15i==.
 
 * c_diarrhea_medfor Get formal medicine except (ors hmf home other_med).
   recode h12z h15 h15a h15b h15c h15e h15g h15h h15i (8=.)
-  egen medfor =rowtotal(h12z h15 h15a h15b h15c h15e h15g h15h h15i)
+  egen medfor =rowtotal(h12z h15 h15a h15b h15c h15e h15g h15h h15i),mi
   gen c_diarrhea_medfor = ( medfor !=0) if c_diarrhea == 1   // formal medicine don't include "home remedy, herbal medicine and other"
   replace c_diarrhea_medfor = . if h12z+h15+h15a+h15b+h15c+h15e+h15g+h15h+h15i == .
 
