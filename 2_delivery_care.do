@@ -24,7 +24,7 @@ gen country = regexs(1) if regexm(country_year, "([a-zA-Z]+)")
 	replace c_earlybreast = 1 if inlist(m34,0,100)
 	replace c_earlybreast = . if inlist(m34,199,299,.)
 
-* Generation of c_facdel, c_hospdel & c_sba is cited from Aline: https://github.com/wengxyu1030/DHS-Recode-VI/blob/master/2_delivery_care.do
+* The structure to generate c_facdel, c_hospdel & c_sba is cited from Aline: https://github.com/wengxyu1030/DHS-Recode-VI/blob/master/2_delivery_care.do
 	*c_hospdel: child born in hospital of births in last 2 years
 		decode m15, gen(m15_lab)
 		replace m15_lab = lower(m15_lab)
