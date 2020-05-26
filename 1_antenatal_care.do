@@ -79,18 +79,24 @@
 	foreach var of varlist m2a-m2m {
 	local lab: variable label `var'
     replace `var' = . if !regexm("`lab'","trained") & (!regexm("`lab'","doctor|nurse|midwife|mifwife|aide soignante|assistante accoucheuse|clinical officer|mch aide|auxiliary birth attendant|physician assistant|professional|ferdsher|feldshare|skilled|community health care provider|birth attendant|hospital/health center worker|hew|auxiliary|icds|feldsher|mch|vhw|village health team|health personnel|gynecolog(ist|y)|obstetrician|internist|pediatrician|family welfare visitor|medical assistant|health assistant|matron|general practitioner") ///
-	|regexm("`lab'","na^|-na|traditional birth attendant|untrained|unquallified|empirical midwife|box") )
+	|regexm("`lab'","na -|na^|-na|traditional birth attendant|untrained|unquallified|empirical midwife|box") )
 	replace `var' = . if !inlist(`var',0,1)
+	if regexm("`lab'","trained") | !(!regexm("`lab'","doctor|nurse|midwife|mifwife|aide soignante|assistante accoucheuse|clinical officer|mch aide|auxiliary birth attendant|physician assistant|professional|ferdsher|feldshare|skilled|community health care provider|birth attendant|hospital/health center worker|hew|auxiliary|icds|feldsher|mch|vhw|village health team|health personnel|gynecolog(ist|y)|obstetrician|internist|pediatrician|family welfare visitor|medical assistant|health assistant|matron|general practitioner") ///
+	|regexm("`lab'","na -|na^|-na|traditional birth attendant|untrained|unquallified|empirical midwife|box") ){
+		ren `var' `var'gskill
+		}
 	 }
 	/* do consider as skilled if contain words in
 		 the first group but don't contain any words in the second group */
 	egen anc_skill = rowtotal(m2a-m2m),mi
-	egen anc_skillmissing = group(m2a-m2m)
-	count if anc_skill ==0 & anc_skillmissing==. // 0 : number of case where "All non-missing skilled provider variables “No” and 1 or more of the skilled provider type missing"
-
+	
 	*c_anc_ski: antenatal care visit with skilled provider for pregnancy of births in last 2 years
-	gen c_anc_ski = (anc_skill >= 1) if anc_skill !=.
-
+	gen c_anc_ski = c_anc_ski = 1 if anc_skill >= 1 & anc_skill<=26
+	replace c_anc_ski = 0 if anc_skill == 0
+	foreach var of varlist *gskill{
+	replace c_anc_ski = . if anc_skill == 0 & mi(`var')
+	}
+	
 	*c_anc_ski_q: antenatal care visit with skilled provider among ANC users for pregnancy of births in last 2 years
 	gen c_anc_ski_q = (c_anc_ski == 1) if c_anc_any == 1 & !mi(c_anc_ski)
 
