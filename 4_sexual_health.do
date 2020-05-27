@@ -4,7 +4,7 @@
 ************************
 
 	*w_condom_conc: 18-49y woman who had more than one sexual partner in the last 12 months and used a condom during last intercourse
-	gen w_condom_conc=(v761==1) if inrange(v766b,2,10) & inrange(v012,18,49) & v761!=.
+	gen w_condom_conc=(v761==1) if inrange(v766b,2,95) & v761!=.
 
 	*w_CPR: Use of modern contraceptive methods of women age 15(!)-49 married or living in union
 	gen w_CPR=(v313==3)  if (v502==1) & v313!=.
