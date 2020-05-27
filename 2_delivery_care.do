@@ -12,26 +12,28 @@ destring year, replace
 gen country = regexs(1) if regexm(country_year, "([a-zA-Z]+)")
 
 *c_caesarean: Last birth in last 2 years delivered through caesarean
-	clonevar c_caesarean = m17
+	clonevar c_caesarean = m17 if m17<8
 
 *c_skin2skin: child placed on mother's bare skin immediately after birth of births in last 2 years
 	gen c_skin2skin = (m77 == 1) if  !inlist(m77,.,8)               //though missing but still a place holder.(the code might change depends on how missing represented in surveys)
 
 *c_earlybreast: child breastfed within 1 hours of birth of births in last 2 years
+	gen c_earlybreast  = inlist(m34,0,100) if !inlist(m34,199,299,.) & m4 !=. // code . if m34 or m4 missing
+	replace c_earlybreast = 0 if m4 ==94  // code 0 if no breastfeeding
+	/*
 	gen c_earlybreast = .
 
 	replace c_earlybreast = 0 if m4 != .    //  based on Last born children who were ever breastfed
 	replace c_earlybreast = 1 if inlist(m34,0,100)
 	replace c_earlybreast = . if inlist(m34,199,299,.)
-
+	*/
 * The structure to generate c_facdel, c_hospdel & c_sba is cited from Aline: https://github.com/wengxyu1030/DHS-Recode-VI/blob/master/2_delivery_care.do
 	*c_hospdel: child born in hospital of births in last 2 years
 		decode m15, gen(m15_lab)
 		replace m15_lab = lower(m15_lab)
 
 		gen c_hospdel = 0 if !mi(m15)
-		replace c_hospdel = 1 if ///
-		regexm(m15_lab,"medical college|surgical") | ///
+		replace c_hospdel = 1 if regexm(m15_lab,"medical college|surgical") | ///
 		regexm(m15_lab,"hospital") & !regexm(m15_lab,"center|sub-center")
 		replace c_hospdel = . if mi(m15) | m15 == 99 | mi(m15_lab)
 		// please check this indicator in case it's country specific
@@ -51,9 +53,8 @@ gen country = regexs(1) if regexm(country_year, "([a-zA-Z]+)")
 				|regexm("`lab'","na -|na^|-na|traditional birth attendant|untrained|unquallified|empirical midwife|box")) {
 			ren `var' `var'gskill
 			}
-		}
-	/* do consider as skilled if contain words in
-	 the first group but don't contain any words in the second group */
+		} // rename variable of skilled provider to double check with country specific 
+	/* do consider as skilled if contain words in the first group but don't contain any words in the second group */
 		egen sba_skill = rowtotal(m3a-m3n),mi
 
 	*c_sba: Skilled birth attendance of births in last 2 years: go to report to verify how "skilled is defined"
@@ -69,8 +70,8 @@ gen country = regexs(1) if regexm(country_year, "([a-zA-Z]+)")
 	*/
 
 *c_sba_q: child placed on mother's bare skin and breastfeeding initiated immediately after birth among children with sba of births in last 2 years
-		gen c_sba_q = (c_skin2skin == 1 & c_earlybreast == 1) if c_sba == 1
-		replace c_sba_q = . if c_skin2skin == . | c_earlybreast == .
+	gen c_sba_q = (c_skin2skin == 1 & c_earlybreast == 1) if c_sba == 1
+	replace c_sba_q = . if c_skin2skin == . | c_earlybreast == .
 
 *c_sba_eff1: Effective delivery care (baby delivered in facility, by skilled provider, mother and child stay in facility for min. 24h, breastfeeding initiated in first 1h after birth)
     //gen stay = (inrange(m61,124,161)|inrange(m61,201,240)|inrange(m61,301,308))
