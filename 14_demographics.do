@@ -7,13 +7,13 @@
   g w_sampleweight = hv005/10e6
 
 *hm_headrel	Relationship with HH head
-	clonevar hm_headrel = hv101
+  clonevar hm_headrel = hv101
 
-*hm_stay				Stayed in the HH the night before the survey (1/0)
+*hm_stay Stayed in the HH the night before the survey (1/0)
   clonevar hm_stay =  hv103  //vary by survey
 
-*ln	Original line number of household member
-    gen ln = hvidx
+*ln Original line number of household member
+  gen ln = hvidx
 
 *hm_live Alive (1/0)
   gen hm_live = 1
@@ -25,8 +25,8 @@
   gen hm_age_yrs = hv105
 	replace hm_age_yrs = . if inlist(hv105,98)
 
-*hm_age_mon	Age in months (children only)
-	clonevar hm_age_mon = hc1
+*hm_age_mon Age in months (children only)
+  clonevar hm_age_mon = hc1
 
 *hm_dob	date of birth (cmc)
   gen hm_dob = hc32
