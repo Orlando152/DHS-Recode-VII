@@ -5,7 +5,7 @@
 	*c_pnc_any : mother OR child receive PNC in first six weeks by skilled health worker
 	if inlist(name,"Afghanistan2015") {
 		gen c_pnc_any = 0 if !mi(m70) | !mi(m50)
-        replace c_pnc_any = 1 if (m71 <= 306 & inrange(m72,11,13) ) | (m51 <= 306 & inrange(m52,10,13) )
+        	replace c_pnc_any = 1 if (m71 <= 306 & inrange(m72,11,13) ) | (m51 <= 306 & inrange(m52,10,13) )
 		replace c_pnc_any = . if inlist(m71,199,299,399,998)| inlist(m51,998)| m72 == 8 | m52 == 8
 	}
 
@@ -34,9 +34,9 @@
 
 	if inlist(name,"Uganda2016") {
 	gen c_pnc_any = .
-			replace c_pnc_any = 0 if m62 != . | m66 != . | m70 != . | m74 != .
-			replace c_pnc_any = 1 if (m63 <= 306 & inlist(m64,11,12,13)) | (m67 <= 306 & inlist(m68,11,12,13) & m67>=m63 ) | (m71 <= 306 & inlist(m72,11,12,13) & m71 >= m75) | (m75 <= 306 & inlist(m76,11,12,13))
-			replace c_pnc_any = . if inlist(m63,199,299,399,998) | inlist(m67,199,299,399,998) | inlist(m71,199,299,399,998) | inlist(m75,199,299,399,998) | m62 == 8 | m66 == 8 | m70 == 8 | m74 == 8
+		replace c_pnc_any = 0 if m62 != . | m66 != . | m70 != . | m74 != .
+		replace c_pnc_any = 1 if (m63 <= 306 & inlist(m64,11,12,13,14)) | (m67 <= 306 & inlist(m68,11,12,13,14) & m67>=m63 ) | (m71 <= 306 & inlist(m72,11,12,13,14) & m71 >= m75) | (m75 <= 306 & inlist(m76,11,12,13,14))
+		replace c_pnc_any = . if inlist(m63,199,299,399,998) | inlist(m67,199,299,399,998) | inlist(m71,199,299,399,998) | inlist(m75,199,299,399,998) | m62 == 8 | m66 == 8 | m70 == 8 | m74 == 8
 	}
 	
 	*c_pnc_eff: mother AND child in first 24h by skilled health worker
@@ -71,8 +71,6 @@
 		replace c_pnc_eff = 1 if (((inrange(m63,100,124) | m63 == 201 ) & inlist(m64,11,12,13)) | ((inrange(m67,100,124) | m67 == 201) & inlist(m68,11,12,13) & m67 >= m63 )) & (((inrange(m71,100,124) | m71 == 201) & inlist(m72,11,12,13) & m71>=m75) | ((inrange(m75,100,124) | m75 == 201) & inlist(m76,11,12,13)))
 		replace c_pnc_eff = . if inlist(m63,199,299,399,998) | inlist(m67,199,299,399,998) | inlist(m71,199,299,399,998) | inlist(m75,199,299,399,998) | m62 == 8 | m66 == 8 | m70 == 8 | m74 == 8
 	}
-
-	//replace c_pnc_eff = . if !(inrange(hm_age_mom,0,23)& bidx ==1)
 
 	*c_pnc_eff_q: mother AND child in first 24h by skilled health worker among those with any PNC
 	gen c_pnc_eff_q = c_pnc_eff if c_pnc_any == 1
