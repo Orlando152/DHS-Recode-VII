@@ -106,21 +106,18 @@
 	replace c_anc_eff = 0 if c_anc ==0 |  anc_skill==0 | anc_blood ==0 | c_anc_any ==0
 
 	*c_anc_eff_q: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples) among ANC users of births in last 2 years
-	gen c_anc_eff_q = 1 if c_anc_eff == 1 & c_anc_any == 1
-	replace c_anc_eff_q = 0 if c_anc_eff == 0 | c_anc_any == 1
+	gen c_anc_eff_q = c_anc_eff if c_anc_any == 1
 
 	*c_anc_eff2: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples, tetanus vaccination) of births in last 2 years
 	gen c_anc_eff2 = 1 if c_anc_eff ==1 & rh_anc_neotet == 1
 	replace c_anc_eff2 = 0 if c_anc_eff ==0 | rh_anc_neotet == 0
 
 	*c_anc_eff2_q: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples, tetanus vaccination) among ANC users of births in last 2 years
-	gen c_anc_eff2_q = 1 if c_anc_eff2 == 1 & c_anc_any == 1
-	replace c_anc_eff2_q = 0 if c_anc_eff2 == 0 | c_anc_any == 1
+	gen c_anc_eff2_q = c_anc_eff2 if c_anc_any == 1
 
 	*c_anc_eff3: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples, tetanus vaccination, start in first trimester) of births in last 2 years
 	gen c_anc_eff3 = 1 if c_anc_eff2 ==1 & inrange(m13,0,3)
 	replace c_anc_eff3 = 0 if c_anc_eff ==0 | inrange(m13,0,3)
 
 	*c_anc_eff3_q: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples, tetanus vaccination, start in first trimester) among ANC users of births in last 2 years
-	gen c_anc_eff3_q = 1 if c_anc_eff3 == 1 & c_anc_any == 1
-	replace c_anc_eff3_q = 0 if c_anc_eff3 == 0 | c_anc_any == 1
+	gen c_anc_eff3_q = c_anc_eff3 if c_anc_any == 1
