@@ -10,7 +10,8 @@
 
 *hm_stay: Stayed in the HH the night before the survey (1/0)
 	clonevar hm_stay =  hv103  //vary by survey
-
+	// hv103 is slept last night ?
+	
 *ln Original: line number of household member
 	gen ln = hvidx
 

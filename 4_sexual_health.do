@@ -31,6 +31,7 @@
      gen w_metmod_fp = 1 if inlist(unmet,3,4)
      replace w_metmod_fp = 0 if inlist(unmet,1,2)
 	 replace w_metmod_fp = . if v502 != 1  // currently married or in union women
+	 replace w_unmet_fp = . if v502 != 1  // currently married or in union women
 
 	 gen w_need_fp = 1 if w_metmod_fp!=.
      replace w_need_fp = 0 if inlist(unmet,7,9)
