@@ -115,8 +115,12 @@ is cited from Haozheyi's Github: https://github.com/hzyguan888/Git-DHS-Recode-VI
     *  gen c_sevdiarrhea = (c_diarrhea==1 & (c_fever == 1 | c_diarrhea_mof == 1 | eat == 1)) 
 	*  replace c_sevdiarrhea = . if c_diarrhea == . | c_fever == . | c_diarrhea_mof ==.| eat==.
 	g c_sevdiarrhea = c_diarrhea ==1 & (eat ==1 | c_diarrhea_mof == 1 | c_fever ==1 )	 
-	replace c_sevdiarrhea = . if c_diarrhea ==. | (eat==. & c_diarrhea_mof ==. & c_fever ==. )
-
+	//replace c_sevdiarrhea = . if c_diarrhea ==. | (eat==. & c_diarrhea_mof ==. & c_fever ==. )
+    // normally we treat an indicator as missing, if any variables make up this indicator is missing.
+	// I suggest change like this: (Because I realize the sample size of c_diarrhea_mof and eat is diarrhea == 1)
+	replace c_sevdiarrhea = . if c_diarrhea == . | c_fever == . | (c_diarrhea == 1 & (c_diarrhea_mof ==.| eat==.))
+	
+	
 	* c_sevdiarrheatreat: Child with severe diarrhea seen by formal healthcare provider
 	gen c_sevdiarrheatreat = c_diarrhea_pro == 1 if c_sevdiarrhea  == 1 & c_diarrhea_pro != .
 
@@ -124,7 +128,7 @@ is cited from Haozheyi's Github: https://github.com/hzyguan888/Git-DHS-Recode-VI
 	gen iv = (h15c == 1) if !inlist(h15,.,8) & c_diarrhea == 1
 	gen c_sevdiarrheatreat_q = (iv ==1 ) if c_sevdiarrheatreat == 1
 
-* Illness
+* Illness (may need change)
 	*c_illness: Child with any illness symptoms in last two weeks
 	g c_illness = (c_ari==1 | c_diarrhea==1 | c_fever==1) if (c_ari+c_diarrhea+c_fever!=.)
 	g c_illness2 = (c_diarrhea == 1 | c_ari2 == 1 | c_fever == 1) if (c_ari2+c_diarrhea+c_fever!=.)
