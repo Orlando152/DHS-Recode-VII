@@ -18,5 +18,5 @@
 
 *******compare with statacompiler
 preserve
-keep if b19 <60  //
+keep if b8 <5 //
 restore
