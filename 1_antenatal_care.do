@@ -3,10 +3,10 @@
 ******************************
 * ANC visit
 	*c_anc: 4+ antenatal care visits of births in last 2 years
-	gen c_anc = (inrange(m14,4,20)) if m14<=20                                                //Last pregnancies in last 2 years of women currently aged 15-49
-
+	gen c_anc = (inrange(m14,4,20)) if m14<=20                         
+	
 	*c_anc_any: any antenatal care visits of births in last 2 years
-	gen c_anc_any = (inrange(m14,1,20)) if m14<=20                                            //the non-number label for byte value hard to specify.
+	gen c_anc_any = (inrange(m14,1,20)) if m14<=20                         //the non-number label for byte value hard to specify.
 // replace c_anc_any =1 if m2n == 0 // adjusted by m2n, turn m14 = 98 into 1
 
 	*c_anc_bp: Blood pressure measured during pregnancy of births in last 2 years
@@ -31,21 +31,25 @@
 	g c_anc_ur_q = c_anc_ur if c_anc_any==1
 
 	*c_anc_ir: iron supplements taken during pregnancy of births in last 2 years
-	g c_anc_ir =m45==1 if m45<8  // not a subquestion for anc visit
+	g c_anc_ir =m45==1 if !inlist(m45,8,.)  // not a subquestion for anc visit
 
 	*c_anc_ir_q: iron supplements taken during pregnancy among ANC users of births in last 2 years
 	gen c_anc_ir_q = c_anc_ir if c_anc_any==1
 
 	*c_anc_ear: First antenatal care visit in first trimester of pregnancy of births in last 2 years
-	g c_anc_ear = 0 if m2n !=. & m13 <98
+	gen c_anc_ear = .
+	
+	replace c_anc_ear = 0 if m2n != .    // m13 based on Women who had seen someone for antenatal care for their last born child
 	replace c_anc_ear = 1 if inrange(m13,0,3)
+	replace c_anc_ear = . if m13 == 98 
+	
 	*c_anc_ear_q: First antenatal care visit in first trimester of pregnancy among ANC users of births in last 2 years
 	g c_anc_ear_q = c_anc_ear if c_anc_any==1
 
 	*c_anc_tet: pregnant women vaccinated against tetanus for last birth in last 2 years
 	* cited from https://github.com/DHSProgram/DHS-Indicators-Stata/blob/master/Chap09_RH/RH_ANC.do
-	gen tet2lastp = 0                                                                                   //follow the definition by report.
-		replace tet2lastp = 1 if m1 >1 & m1<8
+	gen tet2lastp = 0                                        				   //follow the definition by report.
+	replace tet2lastp = 1 if m1 >1 & m1<8
 
 	* temporary vars needed to compute the indicator
 	gen totet = 0
@@ -77,31 +81,30 @@
 * c_anc_ski, c_anc_ski_q: cited from Aline: https://github.com/wengxyu1030/DHS-Recode-VII/blob/master/1_antenatal_care.do
 	*anc_skill: Categories as skilled: doctor, nurse, midwife, auxiliary nurse/midwife...
 	foreach var of varlist m2a-m2m {
-	local lab: variable label `var'
-    replace `var' = . if !regexm("`lab'","trained") & (!regexm("`lab'","doctor|nurse|midwife|mifwife|aide soignante|assistante accoucheuse|clinical officer|mch aide|auxiliary birth attendant|physician assistant|professional|ferdsher|feldshare|skilled|community health care provider|birth attendant|hospital/health center worker|hew|auxiliary|icds|feldsher|mch|vhw|village health team|health personnel|gynecolog(ist|y)|obstetrician|internist|pediatrician|family welfare visitor|medical assistant|health assistant|matron|general practitioner") ///
-	|regexm("`lab'","na -|na^|-na|traditional birth attendant|untrained|unquallified|empirical midwife|box") )
-	replace `var' = . if !inlist(`var',0,1)
-	if regexm("`lab'","trained") | !(!regexm("`lab'","doctor|nurse|midwife|mifwife|aide soignante|assistante accoucheuse|clinical officer|mch aide|auxiliary birth attendant|physician assistant|professional|ferdsher|feldshare|skilled|community health care provider|birth attendant|hospital/health center worker|hew|auxiliary|icds|feldsher|mch|vhw|village health team|health personnel|gynecolog(ist|y)|obstetrician|internist|pediatrician|family welfare visitor|medical assistant|health assistant|matron|general practitioner") ///
-	|regexm("`lab'","na -|na^|-na|traditional birth attendant|untrained|unquallified|empirical midwife|box") ){
-		ren `var' `var'gskill
+		local lab: variable label `var'
+		replace `var' = . if !regexm("`lab'","trained") & (!regexm("`lab'","doctor|nurse|midwife|mifwife|aide soignante|assistante accoucheuse|clinical officer|mch aide|auxiliary birth attendant|physician assistant|professional|ferdsher|feldshare|skilled|community health care provider|birth attendant|hospital/health center worker|hew|auxiliary|icds|feldsher|mch|vhw|village health team|health personnel|gynecolog(ist|y)|obstetrician|internist|pediatrician|family welfare visitor|medical assistant|health assistant|matron|general practitioner") ///
+		|regexm("`lab'","na -|na^|-na|traditional birth attendant|untrained|unquallified|empirical midwife|box") )
+		replace `var' = . if !inlist(`var',0,1)
+		if regexm("`lab'","trained") | !(!regexm("`lab'","doctor|nurse|midwife|mifwife|aide soignante|assistante accoucheuse|clinical officer|mch aide|auxiliary birth attendant|physician assistant|professional|ferdsher|feldshare|skilled|community health care provider|birth attendant|hospital/health center worker|hew|auxiliary|icds|feldsher|mch|vhw|village health team|health personnel|gynecolog(ist|y)|obstetrician|internist|pediatrician|family welfare visitor|medical assistant|health assistant|matron|general practitioner") ///
+		|regexm("`lab'","na -|na^|-na|traditional birth attendant|untrained|unquallified|empirical midwife|box") ){
+			ren `var' `var'gskill
 		}
 	 }
-	/* do consider as skilled if contain words in
-		 the first group but don't contain any words in the second group */
+	/* do consider as skilled if contain words in the first group but don't contain any words in the second group */
 	egen anc_skill = rowtotal(m2a-m2m),mi
 	
 	*c_anc_ski: antenatal care visit with skilled provider for pregnancy of births in last 2 years
 	gen c_anc_ski = 1 if anc_skill >= 1 & anc_skill!=.
 	replace c_anc_ski = 0 if anc_skill == 0
 	foreach var of varlist *gskill{
-	replace c_anc_ski = . if anc_skill == 0 & mi(`var')
+		replace c_anc_ski = . if anc_skill == 0 & mi(`var')
 	}
 	
 	*c_anc_ski_q: antenatal care visit with skilled provider among ANC users for pregnancy of births in last 2 years
 	gen c_anc_ski_q = c_anc_ski if c_anc_any == 1 
 
 	*c_anc_eff: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples) of births in last 2 years
-	egen anc_blood = rowtotal(m42c m42d m42e),mi
+	egen anc_blood = rowtotal(m42c m42d m42e) if m2n != .
 	gen c_anc_eff = 1 if c_anc == 1 & anc_skill>0 & anc_blood == 3 & anc_skill!=.
 	replace c_anc_eff = 0 if c_anc ==0 |  anc_skill==0 | anc_blood ==0 | c_anc_any ==0
 
@@ -117,7 +120,7 @@
 
 	*c_anc_eff3: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples, tetanus vaccination, start in first trimester) of births in last 2 years
 	gen c_anc_eff3 = 1 if c_anc_eff2 ==1 & inrange(m13,0,3)
-	replace c_anc_eff3 = 0 if c_anc_eff ==0 | inrange(m13,0,3)
+	replace c_anc_eff3 = 0 if c_anc_eff2 ==0 | inrange(m13,4,10)
 
 	*c_anc_eff3_q: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples, tetanus vaccination, start in first trimester) among ANC users of births in last 2 years
 	gen c_anc_eff3_q = c_anc_eff3 if c_anc_any == 1
