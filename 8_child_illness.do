@@ -112,17 +112,12 @@ is cited from Haozheyi's Github: https://github.com/hzyguan888/Git-DHS-Recode-VI
 * Severe Diarrhea
 	* c_sevdiarrhea: Child with severe diarrhea
 	gen eat = (inlist(h39,0,1,2)) if !inlist(h39,.,8,9) & c_diarrhea == 1
-    *  gen c_sevdiarrhea = (c_diarrhea==1 & (c_fever == 1 | c_diarrhea_mof == 1 | eat == 1)) 
-	*  replace c_sevdiarrhea = . if c_diarrhea == . | c_fever == . | c_diarrhea_mof ==.| eat==.
 	g c_sevdiarrhea = c_diarrhea ==1 & (eat ==1 | c_diarrhea_mof == 1 | c_fever ==1 )	 
-	//replace c_sevdiarrhea = . if c_diarrhea ==. | (eat==. & c_diarrhea_mof ==. & c_fever ==. )
-    // normally we treat an indicator as missing, if any variables make up this indicator is missing.
-	// I suggest change like this: (Because I realize the sample size of c_diarrhea_mof and eat is diarrhea == 1)
 	replace c_sevdiarrhea = . if c_diarrhea == . | c_fever == . | (c_diarrhea == 1 & (c_diarrhea_mof ==.| eat==.))
-	
-	
+
 	* c_sevdiarrheatreat: Child with severe diarrhea seen by formal healthcare provider
-	gen c_sevdiarrheatreat = c_diarrhea_pro == 1 if c_sevdiarrhea  == 1 & c_diarrhea_pro != .
+        gen c_sevdiarrheatreat = (c_sevdiarrhea == 1 & c_diarrhea_pro == 1) if c_diarrhea == 1
+	replace c_sevdiarrheatreat = . if c_sevdiarrhea == . | c_diarrhea_pro == .
 
 	* c_sevdiarrheatreat_q: IV (intravenous) treatment of severe diarrhea among children with any formal provider visits
 	gen iv = (h15c == 1) if !inlist(h15,.,8) & c_diarrhea == 1
@@ -134,5 +129,8 @@ is cited from Haozheyi's Github: https://github.com/hzyguan888/Git-DHS-Recode-VI
 	g c_illness2 = (c_diarrhea == 1 | c_ari2 == 1 | c_fever == 1) if (c_ari2+c_diarrhea+c_fever!=.)
 
 	*c_illtreat: Child with any illness symptoms taken to formal provider
-	gen c_illtreat = (c_fevertreat == 1 | c_diarrhea_pro == 1 | c_treatARI == 1) if c_illness == 1 & (c_fevertreat+c_diarrhea_pro+c_treatARI !=.)
+	gen c_illtreat = (c_fevertreat == 1 | c_diarrhea_pro == 1 | c_treatARI == 1) 
+	replace c_illtreat = . if (c_fevertreat == 1 & c_fever == .) | (c_diarrhea == 1 & c_diarrhea_pro == .) | (c_ari == 1 & c_treatARI == .)
+	
 	gen c_illtreat2 = (c_fevertreat == 1 | c_diarrhea_pro == 1 | c_treatARI == 1) if c_illness2 == 1 & (c_fevertreat+c_diarrhea_pro+c_treatARI !=.)
+	replace c_illtreat2 = . if (c_fevertreat == 1 & c_fever == .) | (c_diarrhea == 1 & c_diarrhea_pro == .) | (c_ari2 == 1 & c_treatARI2 == .)
