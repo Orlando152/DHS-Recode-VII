@@ -99,31 +99,28 @@
 	foreach var of varlist *gskill{
 		replace c_anc_ski = . if anc_skill == 0 & mi(`var')
 	}
-	// I don't think you need to ren `var' `var'gskill, as when we gen anc_skill, we already exclude missings in m2a-m2m
 	
 	*c_anc_ski_q: antenatal care visit with skilled provider among ANC users for pregnancy of births in last 2 years
 	gen c_anc_ski_q = c_anc_ski if c_anc_any == 1 
 
 	*c_anc_eff: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples) of births in last 2 years
 	egen anc_blood = rowtotal(m42c m42d m42e) if m2n != .
-	gen c_anc_eff = 1 if c_anc == 1 & anc_skill>0 & anc_blood == 3 & anc_skill!=.
-	replace c_anc_eff = 0 if c_anc ==0 |  anc_skill==0 | inrange(anc_blood,0,2) | c_anc_any ==0
-	// As the complement of anc_blood == 3 should be inrange(anc_blood,0,2)
-
+	gen c_anc_eff = (c_anc == 1 & anc_skill>0 & anc_blood == 3) 
+	replace c_anc_eff = . if c_anc ==. |  anc_skill==. | anc_blood == .
 
 	*c_anc_eff_q: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples) among ANC users of births in last 2 years
 	gen c_anc_eff_q = c_anc_eff if c_anc_any == 1
 
 	*c_anc_eff2: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples, tetanus vaccination) of births in last 2 years
-	gen c_anc_eff2 = 1 if c_anc_eff ==1 & rh_anc_neotet == 1
-	replace c_anc_eff2 = 0 if c_anc_eff ==0 | rh_anc_neotet == 0
-
+	gen c_anc_eff2 = c_anc_eff ==1 & rh_anc_neotet == 1
+	replace c_anc_eff2 = . if c_anc_eff ==. | rh_anc_neotet == .
+	
 	*c_anc_eff2_q: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples, tetanus vaccination) among ANC users of births in last 2 years
 	gen c_anc_eff2_q = c_anc_eff2 if c_anc_any == 1
 
 	*c_anc_eff3: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples, tetanus vaccination, start in first trimester) of births in last 2 years
-	gen c_anc_eff3 = 1 if c_anc_eff2 ==1 & inrange(m13,0,3)
-	replace c_anc_eff3 = 0 if c_anc_eff2 ==0 | inrange(m13,4,10)
+	gen c_anc_eff3 = c_anc_eff2 ==1 & inrange(m13,0,3)
+	replace c_anc_eff3 = . if c_anc_eff2 ==. | m13 == 98 
 
 	*c_anc_eff3_q: Effective ANC (4+ antenatal care visits, any skilled provider, blood pressure, blood and urine samples, tetanus vaccination, start in first trimester) among ANC users of births in last 2 years
 	gen c_anc_eff3_q = c_anc_eff3 if c_anc_any == 1
