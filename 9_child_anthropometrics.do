@@ -16,4 +16,4 @@
     gen c_underweight=hc71<-2 if hc71!=.
 
 *ant_sampleweight Child anthropometric sampling weight
-    gen ant_sampleweight = hv005/10e6 if hc70!=. & hc71!=.
+    gen ant_sampleweight = hv005/10e6
