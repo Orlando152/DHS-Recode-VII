@@ -31,13 +31,13 @@
 	*c_pnc_any : mother OR child receive PNC in first six weeks by skilled health worker
 	gen c_pnc_any = .
 		replace c_pnc_any = 0 if m62 != . | m66 != . | m70 != . | m74 != .
-		replace c_pnc_any = 1 if (m63 <= 306 & m64_skill == 1) | (m67 <= 306 & m68_skill == 1 & m63<=m67) | (m71 <= 306 & m72_skill == 1 & m71 >=m75) | (m75 <= 306 & m76_skill == 1)
+		replace c_pnc_any = 1 if (m63 <= 306 & m64_skill == 1) | (m67 <= 306 & m68_skill == 1 & m63<=m67) | (m71 <= 306 & m72_skill == 1 ) | (m75 <= 306 & m76_skill == 1)
 		replace c_pnc_any = . if inlist(m63,199,299,399,998) | inlist(m67,199,299,399,998) | inlist(m71,199,299,399,998) | inlist(m75,199,299,399,998) | m62 == 8 | m66 == 8 | m70 == 8 | m74 == 8
 	
 	*c_pnc_eff: mother AND child in first 24h by skilled health worker
 	gen c_pnc_eff = .	
 		replace c_pnc_eff = 0 if m62 != . | m66 != . | m70 != . | m74 != . 
-		replace c_pnc_eff = 1 if (((inrange(m63,100,124) | m63 == 201 ) & m64_skill == 1  & m63<=m67) | ((inrange(m67,100,124) | m67 == 201) & m68_skill == 1 )) & (((inrange(m71,100,124) | m71 == 201) & m72_skill == 1 & m71 >=m75 ) | ((inrange(m75,100,124) | m75 == 201) & m76_skill == 1))
+		replace c_pnc_eff = 1 if (((inrange(m63,100,124) | m63 == 201 ) & m64_skill == 1  & m63<=m67) | ((inrange(m67,100,124) | m67 == 201) & m68_skill == 1 )) & (((inrange(m71,100,124) | m71 == 201) & m72_skill == 1) | ((inrange(m75,100,124) | m75 == 201) & m76_skill == 1))
 		replace c_pnc_eff = . if inlist(m63,199,299,399,998) | inlist(m67,199,299,399,998) | inlist(m71,199,299,399,998) | inlist(m75,199,299,399,998) | m62 == 8 | m66 == 8 | m70 == 8 | m74 == 8
 	
 	*c_pnc_eff_q: mother AND child in first 24h by skilled health worker among those with any PNC
@@ -49,8 +49,8 @@
 	recode m78a m78b m78d (8=.)
 	egen check = rowtotal(m78a m78b m78d),mi
 	gen c_pnc_eff2 = c_pnc_eff
-	replace c_pnc_eff2 = . if check != 3										// structure changed according to missing condition in Guide
-	replace c_pnc_eff2 = 0 if m78a == 0 | m78b == 0 | m78d == 0
+	replace c_pnc_eff2 = 0 if check != 3
+	replace c_pnc_eff2 = . if c_pnc_eff == . | m78a == . | m78b == . | m78d == .
 }
     *c_pnc_eff2_q: mother AND child in first 24h weeks by skilled health worker and cord check, temperature check and breastfeeding counselling within first two days among those with any PNC
 	gen c_pnc_eff2_q = c_pnc_eff2 if c_pnc_any ==1
