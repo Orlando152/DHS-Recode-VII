@@ -2,10 +2,9 @@
 *** adult***********
 ********************
 
-capture confirm variabel sh246s sh255s sh264s sh246d sh255d sh264d
-	if _rc == 0 {
-    replace `var' =. if `var'>900
-	}
+foreach k in sh246s sh255s sh264s sh246d sh255d sh264d sh221a sh228a sh232a sh321a sh328a sh332a sh221b sh228b sh232b sh321b sh328b sh332b {
+	cap replace `k' =. if `k'>900
+}
 
 *a_inpatient_1y	18y+ household member hospitalized in last 12 months (1/0)
     gen a_inpatient_1y = .
@@ -20,26 +19,31 @@ capture confirm variabel sh246s sh255s sh264s sh246d sh255d sh264d
 	}
 
 *a_bp_sys 18y+ systolic blood pressure (mmHg) in adult population
-    gen  a_bp_sys = .
 	capture confirm variabel sh246s sh255s sh264s
 	if _rc == 0 {
 	egen a_bp_sys = rowmean(sh246s sh255s sh264s)
 	}
+	if inlist(name,"SouthAfrica2016") {
+		egen a_bp_sys = rowmean(sh221a sh228a sh232a sh321a sh328a sh332a)
+	}
 
 *a_bp_dial	18y+ diastolic blood pressure (mmHg) in adult population
-    gen a_bp_dial = .
 	capture confirm variabel sh246d sh255d sh264d
 	if _rc == 0 {
 	egen a_bp_dial = rowmean(sh246d sh255d sh264d)
 	}
+	if inlist(name,"SouthAfrica2016") {
+	egen a_bp_dial = rowmean(sh221b sh228b sh232b sh321b sh328b sh332b)
+	}
+	
 *a_hi_bp140_or_on_med	18y+ with high blood pressure or on treatment for high blood pressure
 	gen a_hi_bp140=.
-    replace a_hi_bp140=1 if a_bp_sys>=140 | a_bp_dial>=90
-    replace a_hi_bp140=0 if a_bp_sys<140 & a_bp_dial<90
+    	replace a_hi_bp140=1 if a_bp_sys>=140 | a_bp_dial>=90
+    	replace a_hi_bp140=0 if a_bp_sys<140 & a_bp_dial<90
 
 	gen a_hi_bp140_or_on_med = .
 	replace a_hi_bp140_or_on_med=1 if a_bp_treat==1 | a_hi_bp140==1
-    replace a_hi_bp140_or_on_med=0 if a_bp_treat==0 & a_hi_bp140==0
+    	replace a_hi_bp140_or_on_med=0 if a_bp_treat==0 & a_hi_bp140==0
 
 *a_bp_meas				18y+ having their blood pressure measured by health professional in the last year
     gen a_bp_meas = .
