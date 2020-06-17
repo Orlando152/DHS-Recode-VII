@@ -86,7 +86,7 @@ gen ispreferred = "1"   //there are dif. definition for same indicator in DHS da
 foreach var of var c_anc c_anc_bp_q	c_anc_bs_q c_anc_ear c_anc_ir c_anc_ski c_anc_tet c_anc_ur_q c_caesarean c_earlybreast c_sba ///
 c_bcg	c_dpt1	c_dpt2	c_dpt3	c_fullimm	c_measles	c_polio1	c_polio2	c_polio3		///
  c_ari c_diarrhea 	c_diarrhea_hmf	c_diarrhea_mof	c_fever  c_treatdiarrhea c_underweight	c_stunted c_ITN {
-egen value_my`var' = wtmean(`var'), weight(ant_sampleweight)
+egen value_my`var' = wtmean(`var'), weight(w_sampleweight)
 }  
 
 *indicators calculate using ant_samplewieght (women sample weight)
@@ -184,7 +184,7 @@ The bidx is nt used in the hefpi indicator caluclation
 *indicators calculate using ant_samplewieght (child sample weight)
 foreach var of var c_ITN c_anc	c_fullimm c_measles c_sba c_stunted c_treatARI	///
 c_treatdiarrhea	c_underweight {
-egen value_my`var' = wtmean(`var'), weight(ant_sampleweight)
+egen value_my`var' = wtmean(`var'), weight(w_sampleweight)
 }  
 
 *indicators calculate using ant_samplewieght (women sample weight)
