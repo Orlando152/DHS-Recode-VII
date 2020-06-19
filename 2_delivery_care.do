@@ -17,7 +17,7 @@ gen country = regexs(1) if regexm(country_year, "([a-zA-Z]+)")
 	gen c_skin2skin = (m77 == 1) if  !inlist(m77,.,8)               //though missing but still a place holder.(the code might change depends on how missing represented in surveys)
 
 *c_earlybreast: child breastfed within 1 hours of birth of births in last 2 years
-	gen c_earlybreast  = inlist(m34,0,100) if !inlist(m34,199,299,.) & m4 !=. // code . if m34 or m4 missing
+	gen c_earlybreast  = inlist(m34,0,100) if !inlist(m34,199,299,.) // code . if m34 missing
 	replace c_earlybreast = 0 if m4 ==94  // code 0 if no breastfeeding
 	
 * The structure to generate c_facdel, c_hospdel & c_sba is cited from Haopzheyi: https://github.com/wengxyu1030/DHS-Recode-VI/blob/master/2_delivery_care.do
