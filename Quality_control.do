@@ -85,7 +85,7 @@ gen ispreferred = "1"   //there are dif. definition for same indicator in DHS da
 *indicators calculate using ant_samplewieght (child sample weight)
 foreach var of var c_anc c_anc_bp_q	c_anc_bs_q c_anc_ear c_anc_ir c_anc_ski c_anc_tet c_anc_ur_q c_caesarean c_earlybreast c_sba ///
 c_bcg	c_dpt1	c_dpt2	c_dpt3	c_fullimm	c_measles	c_polio1	c_polio2	c_polio3		///
- c_ari c_diarrhea 	c_diarrhea_hmf	c_diarrhea_mof	c_fever  c_treatdiarrhea c_underweight	c_stunted c_ITN {
+ c_ari c_diarrhea 	c_diarrhea_hmf	c_diarrhea_mof	c_fever  c_treatdiarrhea {
 egen value_my`var' = wtmean(`var'), weight(w_sampleweight)
 }  
 
@@ -93,6 +93,11 @@ egen value_my`var' = wtmean(`var'), weight(w_sampleweight)
 foreach var of var  w_CPR w_need_fp w_unmet_fp w_metany_fp w_metmod_fp w_bmi_1549 w_obese_1549 w_overweight_1549 {
 egen value_my`var' = wtmean(`var'), weight(w_sampleweight)
 }  
+
+*indicators calculate using household sample weight
+foreach var of var c_underweight c_stunted	c_ITN {
+egen value_my`var' = wtmean(`var'), weight(hh_sampleweight)
+}
 
 keep surveyid ispreferred value*
 keep if _n == 1
