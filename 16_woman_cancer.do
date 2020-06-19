@@ -44,7 +44,7 @@ if inlist(name,"SouthAfrica2016") {
 	drop w_papsmear
 	preserve
 		use "${SOURCE}/DHS-SouthAfrica2016/DHS-SouthAfrica2016wm.dta", clear	
-		gen w_papsmear = s1407 if !inlist(s1407,.) // period: 3yr, 4-5, 6-10, >10 
+		gen w_papsmear = s1407 if !inlist(s1407,.,8) // period: 3yr, 4-5, 6-10, >10 
 		keep w_* caseid
 		sort caseid
 		save `tpf1'
