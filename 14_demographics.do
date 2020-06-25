@@ -33,3 +33,4 @@
 
 *hm_doi: date of interview (cmc)
 	gen hm_doi = hv008
+  
